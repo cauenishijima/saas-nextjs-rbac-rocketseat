@@ -1,0 +1,10 @@
+{
+  "extends": "@csn/typescript-config/node.json",
+  "include": ["src/**/*.ts", "@types/*"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}

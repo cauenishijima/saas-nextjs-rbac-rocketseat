@@ -1,81 +1,99 @@
-# Turborepo starter
+# SaaS CSN Júpiter
 
-This is an official starter Turborepo.
+This project is a financial manager for syndicate incluing: installment, apportionment, advance to supplier and GED
 
-## Using this example
+## Features
 
-Run the following command:
+### Authentication
 
-```sh
-npx create-turbo@latest
-```
+- [ ] It should be able to authenticate using e-mail & password;
+- [ ] It should be able to authenticate using Github account;
+- [ ] It should be able to recover password using e-mail;
+- [x] It should be able to create an account (e-mail, name and password);
 
-## What's inside?
+### Organizations
 
-This Turborepo includes the following packages/apps:
+- [ ] It should be able to create a new organization;
+- [ ] It should be able to get organizations to which the user belongs;
+- [ ] It should be able to update an organization;
+- [ ] It should be able to shutdown an organization;
+- [ ] It should be able to transfer organization ownership;
 
-### Apps and Packages
+### Invites
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- [ ] It should be able to invite a new member (e-mail, role);
+- [ ] It should be able to accept an invite;
+- [ ] It should be able to revoke a pending invite;
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+### Members
 
-### Utilities
+- [ ] It should be able to get organization members;
+- [ ] It should be able to update a member role;
 
-This Turborepo has some additional tools already setup for you:
+### * Documents Types (Pensar se vai precisar ter)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### * Payments Methods (Pensar se vai precisar ter)
 
-### Build
+### Banks (Pensar em outro nome)
 
-To build all apps and packages, run the following command:
+### Financial Accounts (Contas financeiras)
 
-```
-cd my-turborepo
-pnpm build
-```
+### Departments (Departamentos)
 
-### Develop
+### Suppliers (Fornecedores)
 
-To develop all apps and packages, run the following command:
+### Accounts Payable (Contas a Pagar)
 
-```
-cd my-turborepo
-pnpm dev
-```
+### Installmnets (Parcelas)
 
-### Remote Caching
+### Advances (Adiantamentos)
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### Allocations (Rateios)
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+### Payments (Pagamentos)
 
-```
-cd my-turborepo
-npx turbo login
-```
+### Billing
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- [ ] It should be able to get billing details for organization ($20 per project / $10 per member excluding billing role);
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## RBAC
 
-```
-npx turbo link
-```
+Roles & permissions.
 
-## Useful Links
+### Roles
 
-Learn more about the power of Turborepo:
+- Owner (count as administrator)
+- Administrator
+- Member
+- Billing (one per organization)
+- Anonymous
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+### Permissions table
+
+|                          | Administrator | Member | Billing | Anonymous |
+| ------------------------ | ------------- | ------ | ------- | --------- |
+| Update organization      | ✅            | ❌     | ❌      | ❌        |
+| Delete organization      | ✅            | ❌     | ❌      | ❌        |
+| Invite a member          | ✅            | ❌     | ❌      | ❌        |
+| Revoke an invite         | ✅            | ❌     | ❌      | ❌        |
+| List members             | ✅            | ✅     | ✅      | ❌        |
+| Transfer ownership       | ⚠️            | ❌     | ❌      | ❌        |
+| Update member role       | ✅            | ❌     | ❌      | ❌        |
+| Delete member            | ✅            | ⚠️     | ❌      | ❌        |
+| Get billing details      | ✅            | ❌     | ✅      | ❌        |
+| Export billing details   | ✅            | ❌     | ✅      | ❌        |
+
+> ✅ = allowed
+> ❌ = not allowed
+> ⚠️ = allowed w/ conditions
+
+#### Conditions
+
+- Only owners may transfer organization ownership;
+- Members can leave their own organization;
+
+
+https://accounts.google.com/o/oauth2/v2/auth?access_type=online&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&include_granted_scopes=true&state=6a3b9d5f80f0d262b7371e182735b85cd1fa928658c3f1b41562fdf6e96ed56e&response_type=code&client_id=606451606475-o7oo003r6n1q49pb5ora5rkhc3ifh83r.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fcallback
+
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQ2F1ZSIsImVtYWlsIjoiY2F1ZUBhY21lLmNvbSIsInN1YiI6IjMyNWUwODA5LTA5NGYtNGQ3My1hNWVkLTE4NTNlNDc0N2RhMyIsImlhdCI6MTcxNzY5Nzc2OSwiZXhwIjoxNzE4MzAyNTY5fQ.L-TeobqyG0Vk1WCH3NtSBS4jdQrSp_QIaXrHMY7W6fY

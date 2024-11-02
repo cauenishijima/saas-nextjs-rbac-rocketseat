@@ -1,0 +1,4 @@
+{
+  "extends": "@csn/typescript-config/library.json",
+  "include": ["src/**/*.ts"]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "@csn/env",
+  "version": "0.0.0",
+  "private": true,
+  "main": "index.ts",
+  "types": "index.ts",
+  "devDependencies": {
+    "@csn/eslint-config": "workspace:*",
+    "@csn/prettier-config": "workspace:*",
+    "@csn/typescript-config": "workspace:*",
+    "@types/node": "20.13.0"
+  },
+  "dependencies": {
+    "@t3-oss/env-nextjs": "0.10.1",
+    "zod": "3.23.8"
+  },
+  "prettier": "@csn/prettier-config",
+  "eslintConfig": {
+    "extends": [
+      "@csn/eslint-config/library"
+    ]
+  }
+}

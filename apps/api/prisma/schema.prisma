@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               String   @id @default(uuid())
+  name             String?
+  email            String   @unique
+  passwordHash     String?  @map("password_hash")
+  avatarUrl        String?  @map("avatar_url")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  stripeCustomerId String?  @map("stripe_customer_id")
+
+  tokens            Token[]
+  oauthAccounts     OAuthAccount[]
+  invites           Invite[]
+  member_on         Member[]
+  owns_organization Organization[]
+
+  @@map("users")
+}
+
+enum TokenType {
+  PASSWORD_RECOVER
+}
+
+model Token {
+  id        String    @id @default(uuid())
+  type      TokenType
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  @@map("tokens")
+}
+
+enum OAuthAccountProvider {
+  GITHUB
+  GOOGLE
+}
+
+model OAuthAccount {
+  id                String               @id @default(uuid())
+  provider          OAuthAccountProvider
+  providerAccountId String               @unique @map("provider_account_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  @@unique([provider, userId])
+  @@map("oauth-accounts")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+  BILLING
+}
+
+model Invite {
+  id        String   @id @default(uuid())
+  email     String
+  role      Role
+  createdAt DateTime @default(now()) @map("created_at")
+
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+  authorId String? @map("author_id")
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String       @map("organization_id")
+
+  @@unique([email, organizationId])
+  @@index([email])
+  @@map("invites")
+}
+
+model Member {
+  id   String @id @default(uuid())
+  role Role   @default(MEMBER)
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String       @map("organization_id")
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @map("user_id")
+
+  @@unique([organizationId, userId])
+  @@map("members")
+}
+
+model Organization {
+  id                       String   @id @default(uuid())
+  name                     String
+  slug                     String   @unique
+  domain                   String?  @unique
+  shouldAttachUserByDomain Boolean  @default(false) @map("should_attach_user_by_domain")
+  avatarUrl                String?  @map("avatar_url")
+  createdAt                DateTime @default(now()) @map("created_at")
+  updatedAt                DateTime @updatedAt @map("updated_at")
+  stripeSubscriptionId     String?  @map("stripe_subscription_id")
+  stripePriceId            String?  @map("stripe_price_id")
+  stripeStatus             String?  @map("stripe_status")
+
+  owner   User   @relation(fields: [ownerId], references: [id])
+  ownerId String @map("owner_id")
+
+  invites Invite[]
+  members Member[]
+  banks   Bank[]
+
+  @@map("organizations")
+}
+
+enum BankType {
+  BANK
+  CASH
+  CREDIT_CARD
+}
+
+model Bank {
+  id                 String   @id @default(uuid())
+  code               Int
+  name               String
+  initialBalance     Decimal  @default(0) @map("initial_balance")
+  initialDate        DateTime @map("initial_date")
+  type               BankType
+  hasAutomaticRescue Boolean  @default(false) @map("has_automatic_rescue")
+  actived            Boolean  @default(true)
+
+  automaticRescueId String? @map("automatic_rescue_id")
+  automaticRescue   Bank?   @relation(name: "rl1", fields: [automaticRescueId], references: [id], onDelete: SetNull)
+
+  Banks Bank[] @relation(name: "rl1")
+
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId String       @map("organization_id")
+
+  @@unique([organizationId, code])
+  @@map("banks")
+}
